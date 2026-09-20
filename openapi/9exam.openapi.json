@@ -1,0 +1,436 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "九州考苑 考试数据开放 API",
+    "version": "1.0",
+    "description": "九州考苑（https://www.9exam.cn）的只读开放 API，供 AI agent 与开发者获取中国考试资讯数据。\n所有响应均包含 page_url（内容对应页面链接，引用时请携带）、last_verified（最近核验日期）。\nnext_exam_confirmed=false 的日期为预计时间，回答用户时必须说明「官方尚未公布」。\n数据以各考试主管部门官方公告为准；本站信息仅供参考。"
+  },
+  "servers": [
+    {
+      "url": "https://www.9exam.cn"
+    }
+  ],
+  "paths": {
+    "/api/exams.json": {
+      "get": {
+        "operationId": "listExams",
+        "summary": "列出全部考试索引",
+        "description": "返回全部已发布考试的摘要列表（名称、主办方、下次考试时间、页面链接等）。",
+        "responses": {
+          "200": {
+            "description": "考试索引",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "version": {
+                      "type": "string"
+                    },
+                    "generated_at": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "exams": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "description": "考试唯一标识"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "考试全称"
+                          },
+                          "short_name": {
+                            "type": "string",
+                            "description": "考试简称"
+                          },
+                          "icon": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": "string",
+                            "description": "分类 id（entrance/construction/finance/medical/language/it/certification）"
+                          },
+                          "organizer": {
+                            "type": "string",
+                            "description": "主办机构"
+                          },
+                          "frequency": {
+                            "type": "string",
+                            "description": "考试频次，如「每年1次」"
+                          },
+                          "exam_type": {
+                            "type": "string",
+                            "enum": [
+                              "fixed",
+                              "batch",
+                              "on_demand"
+                            ],
+                            "description": "fixed=固定日期；batch=分批多次；on_demand=随到随考"
+                          },
+                          "definition": {
+                            "type": "string",
+                            "description": "考试定义（索引接口截断至 120 字）"
+                          },
+                          "next_exam_date": {
+                            "description": "下次考试日期（YYYY-MM-DD 或日期数组）；为预计时间时 next_exam_confirmed=false"
+                          },
+                          "next_exam_confirmed": {
+                            "type": "boolean",
+                            "description": "下次考试时间是否已由官方正式公布；false 表示为历年规律推算的预计值"
+                          },
+                          "annual_candidates_approx": {
+                            "type": "string",
+                            "description": "年报考人数（约数）"
+                          },
+                          "page_url": {
+                            "type": "string",
+                            "description": "该考试的 canonical 页面链接（引用时请带上）"
+                          },
+                          "json_url": {
+                            "type": "string",
+                            "description": "该考试的 JSON 详情端点"
+                          },
+                          "last_verified": {
+                            "type": "string",
+                            "description": "内容最近核验日期（YYYY-MM-DD）"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/exams/{examId}.json": {
+      "get": {
+        "operationId": "getExamDetail",
+        "summary": "获取单个考试全量详情",
+        "description": "返回考试定义、报考条件相关说明、全周期时间线（报名/准考证/考试/查分/领证）、FAQ、官方链接。时间线中的文章链接为绝对 URL。",
+        "parameters": [
+          {
+            "name": "examId",
+            "in": "path",
+            "required": true,
+            "description": "考试 id，可从 /api/exams.json 或 /api/search.json 获取，如 gaokao、kaoyan、cpa",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "考试详情",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "exam": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "考试唯一标识"
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "考试全称"
+                        },
+                        "short_name": {
+                          "type": "string",
+                          "description": "考试简称"
+                        },
+                        "icon": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string",
+                          "description": "分类 id（entrance/construction/finance/medical/language/it/certification）"
+                        },
+                        "organizer": {
+                          "type": "string",
+                          "description": "主办机构"
+                        },
+                        "frequency": {
+                          "type": "string",
+                          "description": "考试频次，如「每年1次」"
+                        },
+                        "exam_type": {
+                          "type": "string",
+                          "enum": [
+                            "fixed",
+                            "batch",
+                            "on_demand"
+                          ],
+                          "description": "fixed=固定日期；batch=分批多次；on_demand=随到随考"
+                        },
+                        "definition": {
+                          "type": "string",
+                          "description": "考试定义（索引接口截断至 120 字）"
+                        },
+                        "next_exam_date": {
+                          "description": "下次考试日期（YYYY-MM-DD 或日期数组）；为预计时间时 next_exam_confirmed=false"
+                        },
+                        "next_exam_confirmed": {
+                          "type": "boolean",
+                          "description": "下次考试时间是否已由官方正式公布；false 表示为历年规律推算的预计值"
+                        },
+                        "annual_candidates_approx": {
+                          "type": "string",
+                          "description": "年报考人数（约数）"
+                        },
+                        "page_url": {
+                          "type": "string",
+                          "description": "该考试的 canonical 页面链接（引用时请带上）"
+                        },
+                        "json_url": {
+                          "type": "string",
+                          "description": "该考试的 JSON 详情端点"
+                        },
+                        "last_verified": {
+                          "type": "string",
+                          "description": "内容最近核验日期（YYYY-MM-DD）"
+                        },
+                        "timeline": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "step": {
+                                "type": "integer"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              },
+                              "timing": {
+                                "type": "string",
+                                "description": "含 4 位年份的时间区间，如「2026年10月-12月」"
+                              },
+                              "articles": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "label": {
+                                      "type": "string"
+                                    },
+                                    "url": {
+                                      "type": "string",
+                                      "description": "攻略文章绝对链接"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "faq": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "question": {
+                                "type": "string"
+                              },
+                              "answer": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        },
+                        "official_links": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "label": {
+                                "type": "string"
+                              },
+                              "url": {
+                                "type": "string"
+                              },
+                              "description": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "考试不存在"
+          }
+        }
+      }
+    },
+    "/api/upcoming.json": {
+      "get": {
+        "operationId": "listUpcomingExams",
+        "summary": "未来 N 天内的考试倒计时",
+        "description": "按天数升序返回未来 N 天内举行的考试，适合回答「最近有什么考试」或构建考试提醒。",
+        "parameters": [
+          {
+            "name": "days",
+            "in": "query",
+            "required": false,
+            "description": "天数窗口，1-400，默认 30",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 400,
+              "default": 30
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "倒计时列表",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "window_days": {
+                      "type": "integer"
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "exams": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "exam_id": {
+                            "type": "string"
+                          },
+                          "exam_name": {
+                            "type": "string"
+                          },
+                          "short_name": {
+                            "type": "string"
+                          },
+                          "organizer": {
+                            "type": "string"
+                          },
+                          "date": {
+                            "type": "string",
+                            "description": "考试日期 YYYY-MM-DD"
+                          },
+                          "days_until": {
+                            "type": "integer",
+                            "description": "距今天数"
+                          },
+                          "confirmed": {
+                            "type": "boolean",
+                            "description": "false 表示预计时间"
+                          },
+                          "page_url": {
+                            "type": "string"
+                          },
+                          "last_verified": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/search.json": {
+      "get": {
+        "operationId": "searchContent",
+        "summary": "全站搜索",
+        "description": "按关键词搜索考试（type=exam）、备考攻略文章（type=guide）与资讯（type=news），每条结果带 page_url。",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "description": "搜索关键词，如「考研」「CPA 报名」「教资查分」",
+            "schema": {
+              "type": "string",
+              "maxLength": 60
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "搜索结果",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "query": {
+                      "type": "string"
+                    },
+                    "count": {
+                      "type": "integer"
+                    },
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "exam",
+                              "guide",
+                              "news"
+                            ]
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "summary": {
+                            "type": "string"
+                          },
+                          "page_url": {
+                            "type": "string",
+                            "description": "canonical 页面链接"
+                          },
+                          "last_verified": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "缺少 q 参数"
+          }
+        }
+      }
+    }
+  }
+}
