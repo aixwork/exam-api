@@ -77,11 +77,11 @@ open "https://www.9exam.cn/api/calendar/gaokao.ics"
 
 | 方式 | 入口 | 适用 |
 |---|---|---|
+| **MCP Server** | `{base}/api/mcp`（POST JSON-RPC，无状态） | Claude / Cursor / ChatGPT，agent 原生工具调用，见 [mcp/README.md](mcp/README.md) |
 | OpenAPI 规范 | `{base}/api/openapi.json` | ChatGPT Actions、支持 OpenAPI 的 agent 框架 |
 | llms.txt | `{base}/llms.txt` | 浏览式 agent（自动发现站点结构与 API） |
 | JSON alternate | 考试页 HTML `<link rel="alternate" type="application/json">` | 浏览式 agent 从页面发现机读版本 |
 | ICS alternate | 考试页 HTML `<link rel="alternate" type="text/calendar">` | 日历客户端 / agent 发现并订阅考试时间 |
-| MCP Server | 路线图中（P2），将基于本仓库开源 | Claude / Cursor / ChatGPT Apps |
 
 ## 数据说明
 
