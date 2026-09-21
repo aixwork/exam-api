@@ -23,6 +23,8 @@ English summary: Read-only JSON API for Chinese exam information (registration d
 | `GET /api/exams/{examId}.json` | 单考试全量详情：定义、全周期时间线（报名/准考证/考试/查分/领证）、FAQ、官方报名入口 |
 | `GET /api/upcoming.json?days=30` | 未来 N 天考试倒计时（`days` 1-400，默认 30），适合做考试提醒 |
 | `GET /api/search.json?q=关键词` | 全站搜索：考试（`exam`）+ 攻略文章（`guide`）+ 资讯（`news`） |
+| `GET /api/calendar.ics` | 全站考试日历订阅源（RFC 5545 ICS），未来 400 天，可订阅自动同步 |
+| `GET /api/calendar/{examId}.ics` | 单考试日历订阅源——「帮我建一个考研倒计时」类任务的直接答案 |
 
 ## 响应约定（给 agent 的三条重要规则）
 
@@ -41,6 +43,9 @@ curl -s "https://www.9exam.cn/api/upcoming.json?days=60"
 
 # 搜索「CPA 报名」
 curl -s "https://www.9exam.cn/api/search.json?q=CPA%20报名"
+
+# 订阅高考日历（Apple/Google/Outlook 日历直接打开即订阅）
+open "https://www.9exam.cn/api/calendar/gaokao.ics"
 ```
 
 `/api/upcoming.json?days=60` 响应节选：
@@ -75,6 +80,7 @@ curl -s "https://www.9exam.cn/api/search.json?q=CPA%20报名"
 | OpenAPI 规范 | `{base}/api/openapi.json` | ChatGPT Actions、支持 OpenAPI 的 agent 框架 |
 | llms.txt | `{base}/llms.txt` | 浏览式 agent（自动发现站点结构与 API） |
 | JSON alternate | 考试页 HTML `<link rel="alternate" type="application/json">` | 浏览式 agent 从页面发现机读版本 |
+| ICS alternate | 考试页 HTML `<link rel="alternate" type="text/calendar">` | 日历客户端 / agent 发现并订阅考试时间 |
 | MCP Server | 路线图中（P2），将基于本仓库开源 | Claude / Cursor / ChatGPT Apps |
 
 ## 数据说明

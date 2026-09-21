@@ -361,6 +361,50 @@
         }
       }
     },
+    "/api/calendar.ics": {
+      "get": {
+        "operationId": "getExamCalendar",
+        "summary": "全站考试日历订阅源（ICS）",
+        "description": "RFC 5545 iCalendar 订阅源，包含未来 400 天内有日期的全部考试。日历客户端与 agent 可持续订阅，内容更新后自动同步。每个事件含 page_url 详情链接。",
+        "responses": {
+          "200": {
+            "description": "iCalendar 订阅源",
+            "content": {
+              "text/calendar": {}
+            }
+          }
+        }
+      }
+    },
+    "/api/calendar/{examId}.ics": {
+      "get": {
+        "operationId": "getExamCalendarByExam",
+        "summary": "单考试日历订阅源（ICS）",
+        "description": "单个考试的 iCalendar 订阅源；预计时间会在事件标题标注「（预计）」。适合「帮我建一个 XX 考试倒计时/提醒」类任务。",
+        "parameters": [
+          {
+            "name": "examId",
+            "in": "path",
+            "required": true,
+            "description": "考试 id，如 gaokao、kaoyan、cpa",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "iCalendar 订阅源",
+            "content": {
+              "text/calendar": {}
+            }
+          },
+          "404": {
+            "description": "考试不存在"
+          }
+        }
+      }
+    },
     "/api/search.json": {
       "get": {
         "operationId": "searchContent",
